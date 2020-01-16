@@ -6,10 +6,12 @@ readonly PUBLIC_IP="$(dig +short myip.opendns.com @resolver1.opendns.com)"
 
 _changeSecurityGroupRule() {
     aws \
-        --region us-east-2 \
+        --region "${AWS_REGION:-us-east-2}" \
         ec2 "$1-security-group-ingress" \
         --group-id "$AWS_SECURITY_GROUP" \
-        --ip-permissions "FromPort=4646,IpProtocol=tcp,IpRanges=[{CidrIp=$PUBLIC_IP/32,Description=\"CI\"}],ToPort=4647"
+        --protocol tcp \
+        --cidr "$PUBLIC_IP/32" \
+        --port "${NOMAD_PORT:-4646}"
 }
 
 if [ -n "${AWS_SECURITY_GROUP:-}" ]; then
