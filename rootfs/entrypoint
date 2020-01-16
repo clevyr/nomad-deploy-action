@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -euxo pipefail
+
+readonly PUBLIC_IP="$(dig +short myip.opendns.com @resolver1.opendns.com)"
+
+_changeSecurityGroupRule() {
+    aws \
+        --region us-east-2 \
+        ec2 "$1-security-group-ingress" \
+        --group-id "$AWS_SECURITY_GROUP" \
+        --ip-permissions "FromPort=4646,IpProtocol=tcp,IpRanges=[{CidrIp=$PUBLIC_IP/32,Description=\"CI\"}],ToPort=4647"
+}
+
+if [ -n "${AWS_SECURITY_GROUP:-}" ]; then
+    _changeSecurityGroupRule authorize
+    trap "_changeSecurityGroupRule revoke" INT TERM EXIT
+fi
+
+sed "s/\[\[\.version\]\]/$DOCKER_TAG/" "$GITHUB_WORKSPACE/$NOMAD_JOB" | nomad job run -
+
