@@ -5,6 +5,9 @@ ENV NOMAD_VERSION=$NOMAD_VERSION
 
 RUN set -x \
     && apk add \
+        --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
+        cni-plugins \
+    && apk add \
         --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
         nomad \
     && apk add \
