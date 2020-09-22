@@ -20,4 +20,3 @@ if [ -n "${AWS_SECURITY_GROUP:-}" ]; then
 fi
 
 sed "s/\[\[\.version\]\]/$DOCKER_TAG/" "$GITHUB_WORKSPACE/$NOMAD_JOB" | nomad job run -
-
