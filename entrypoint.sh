@@ -19,4 +19,14 @@ if [ -n "${AWS_SECURITY_GROUP:-}" ]; then
     trap "_changeSecurityGroupRule revoke" INT TERM EXIT
 fi
 
-sed "s/\[\[\.version\]\]/$DOCKER_TAG/" "$GITHUB_WORKSPACE/$NOMAD_JOB" | nomad job run -
+USE_LEVANT=${USE_LEVANT:-false}
+if [ "$USE_LEVANT" = "true" ]; then
+  curl -L https://github.com/hashicorp/levant/releases/download/0.2.8/linux-amd64-levant -o levant && \
+    chmod +x ./levant
+  ./levant deploy -ignore-no-changes -address="$NOMAD_ADDR" -canary-auto-promote=30 -var version="$DOCKER_TAG" "$NOMAD_JOB"
+else
+  curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - && \
+    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" && \
+    sudo apt-get update && sudo apt-get install nomad
+  sed "s/\[\[\.version\]\]/$DOCKER_TAG/" "$GITHUB_WORKSPACE/$NOMAD_JOB" | nomad job run -
+fi

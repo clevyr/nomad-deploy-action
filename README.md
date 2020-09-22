@@ -14,3 +14,4 @@ This repo will take a Nomad job, replace a string of "[[.version]]" with the inp
 | DOCKER_TAG            | The Docker tag to replace before deploying.             | `latest`                                   |
 | NOMAD_ADDR            | The remote Nomad url.                                   | `https://example.com`                      |
 | NOMAD_PORT            | The remote Nomad port.                                  | `4646`                                     |
+| USE_LEVANT            | Deploy using Levant instead of Nomad                    | `false`                                    |
