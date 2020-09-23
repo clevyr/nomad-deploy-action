@@ -15,3 +15,5 @@ This repo will take a Nomad job, replace a string of "[[.version]]" with the inp
 | NOMAD_ADDR            | The remote Nomad url.                                   | `https://example.com`                      |
 | NOMAD_PORT            | The remote Nomad port.                                  | `4646`                                     |
 | USE_LEVANT            | Deploy using Levant instead of Nomad                    | `false`                                    |
+| LEVANT_VERSION        | Levant version to use                                   | `0.2.8`                                    |
+| LEVANT_PROMOTE_TIME   | Time before calling Levant's auto_promote               | `45`                                       |
