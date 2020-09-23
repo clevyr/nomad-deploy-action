@@ -2,8 +2,8 @@ name: Nomad Deploy
 description: Deploys a codebase to Nomad
 author: Gabe Cook
 runs:
-  using: docker
-  image: Dockerfile
+  using: node12
+  main: main.js
 branding:
   icon: upload-cloud
   color: green
