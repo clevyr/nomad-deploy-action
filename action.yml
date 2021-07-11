@@ -1,4 +1,4 @@
-name: Nomad Deploy
+name: Nomad Deploy HCL2
 description: Deploys a codebase to Nomad
 author: Alon Bar Tzlil
 runs:
