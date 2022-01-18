@@ -30,5 +30,5 @@ else
   NOMAD_VERSION="${NOMAD_VERSION:-1.1.1}"
   curl -L "https://releases.hashicorp.com/nomad/$NOMAD_VERSION/nomad_${NOMAD_VERSION}_linux_amd64.zip" -o nomad.zip && \
     unzip nomad.zip
-  sed "s/\[\[\.version\]\]/$DOCKER_TAG/" "$GITHUB_WORKSPACE/$NOMAD_JOB" | ./nomad job run -hcl1 -
+  sed "s/\[\[\.version\]\]/$DOCKER_TAG/" "$GITHUB_WORKSPACE/$NOMAD_JOB" | ./nomad job run -
 fi
