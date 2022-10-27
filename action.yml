@@ -2,7 +2,7 @@ name: Nomad Deploy HCL2
 description: Deploys a codebase to Nomad
 author: Alon Bar Tzlil
 runs:
-  using: node12
+  using: node16
   main: main.js
 branding:
   icon: upload-cloud
