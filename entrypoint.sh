@@ -1,5 +1,5 @@
 #!/bin/sh
-JOB_NAME=$(sudo head -1 "$GITHUB_WORKSPACE/$NOMAD_JOB" | grep job | cut -d ' ' -f 2)
+JOB_NAME=$(sudo head -1 "$GITHUB_WORKSPACE/$NOMAD_JOB" | grep job | cut -d ' ' -f 2 | cut -d '"' -f 2)
 
 set -euxo pipefail
 
