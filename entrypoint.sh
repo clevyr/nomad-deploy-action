@@ -25,7 +25,7 @@ sudo apt-get update && sudo apt-get install nomad
 sudo apt-get install jq
 sed -i "s/\[\[\.version\]\]/$DOCKER_TAG/" "$GITHUB_WORKSPACE/$NOMAD_JOB"
 
-JOB_NAME=nomad job inspect $JOB_NAME | jq .Job.ID
+JOB_NAME=cat "$GITHUB_WORKSPACE/$NOMAD_JOB" | jq .Job.ID
 DONT_DEPLOY_CNC="${DONT_DEPLOY_CNC:-false}"
 if [ "$DONT_DEPLOY_CNC" = "true" ]; then
     CNC_LATEST_IMAGE=nomad job inspect $JOB_NAME | jq '.[].TaskGroups[].Tasks[].Config.image' | grep cnc | rev | cut -d ':' -f 1 | rev | cut -d '"' -f 1
