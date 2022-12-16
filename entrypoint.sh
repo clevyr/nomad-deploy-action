@@ -19,16 +19,20 @@ if [ -n "${AWS_SECURITY_GROUP:-}" ]; then
     trap "_changeSecurityGroupRule revoke" INT TERM EXIT
 fi
 
-USE_LEVANT="${USE_LEVANT:-false}"
-if [ "$USE_LEVANT" = "true" ]; then
-  LEVANT_PROMOTE_TIME="${LEVANT_PROMOTE_TIME:-45}"
-  LEVANT_VERSION="${LEVANT_VERSION:-0.2.8}"
-  curl -L https://github.com/hashicorp/levant/releases/download/"$LEVANT_VERSION"/linux-amd64-levant -o levant && \
-    chmod +x ./levant
-  ./levant deploy -ignore-no-changes -address="$NOMAD_ADDR" -canary-auto-promote="$LEVANT_PROMOTE_TIME" -var version="$DOCKER_TAG" "$NOMAD_JOB"
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - && \
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" && \
+sudo apt-get update && sudo apt-get install nomad
+sudo apt-get install jq
+sed -i "s/\[\[\.version\]\]/$DOCKER_TAG/" "$GITHUB_WORKSPACE/$NOMAD_JOB"
+
+JOB_NAME=cat /tmp/tmp.txt | jq .Job.ID 
+DONT_DEPLOY_CNC="${DONT_DEPLOY_CNC:-false}"
+if [ "$DONT_DEPLOY_CNC" = "true" ]; then
+    CNC_LATEST_IMAGE=nomad job inspect $JOB_NAME | jq '.[].TaskGroups[].Tasks[].Config.image' | grep cnc | rev | cut -d ':' -f 1 | rev | cut -d '"' -f 1
+    sed -i "s/\[\[\.version-cnc\]\]/$CNC_LATEST_IMAGE/" "$GITHUB_WORKSPACE/$NOMAD_JOB"
 else
-  curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - && \
-    sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" && \
-    sudo apt-get update && sudo apt-get install nomad
-  sed "s/\[\[\.version\]\]/$DOCKER_TAG/" "$GITHUB_WORKSPACE/$NOMAD_JOB" | nomad job run -
+    sed -i "s/\[\[\.version-cnc\]\]/$DOCKER_TAG/" "$GITHUB_WORKSPACE/$NOMAD_JOB"
 fi
+
+
+nomad job run "$GITHUB_WORKSPACE/$NOMAD_JOB"
